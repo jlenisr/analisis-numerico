@@ -1,4 +1,4 @@
-import math
+from math import *
 from tabulate import tabulate
 
 head = ["i", "p", "error"]
@@ -6,8 +6,11 @@ tableData = []
 def puntofijo(p0, n, tol, g):
     i = 1
     while i <= n:
-        p = g(p0)
-        tableData.append([i, p, abs(p - p0)])
+        try: 
+            p = g(p0)
+            tableData.append([i, p, abs(p - p0)])
+        except OverflowError:
+            tableData.append([i, "inf", "inf"])
         if abs(p-p0) < tol:
             break
         i += 1
@@ -19,5 +22,5 @@ print("Si se van a usar funciones matematicas fuera del alcance de python en est
 p0 = float(eval(input("ingrese la aproximaciòn inicial: ")))
 n = int(input("numero de iteraciones: "))
 tol = float(input("ingrese la tolerancia: "))
-g = eval(input("ingrese la funcion de punto fijo en lambda, ejemplo, lambda x: math.cos(x) - x --> "))
+g = eval("lambda x:" + input("ingrese la funcion de punto fijo ejemplo, cos(x) - x --> "))
 puntofijo(p0, n, tol, g)

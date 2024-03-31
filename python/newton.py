@@ -9,10 +9,13 @@ def newton(p0, tol, n, f):
     i = 1
     ff = sp.lambdify(x, f)
     while i <= n:
-        df = sp.diff(f, x)
-        dff = sp.lambdify(x, df)
-        p = p0 - ff(p0)/dff(p0)
-        tableData.append([i, p])
+        try:
+            df = sp.diff(f, x)
+            dff = sp.lambdify(x, df)
+            p = p0 - ff(p0)/dff(p0)
+            tableData.append([i, p])
+        except OverflowError:
+            tableData.append([i, "inf"])
         if abs(p - p0) < tol:
             break
         i += 1
