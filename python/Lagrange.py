@@ -1,4 +1,4 @@
-import math
+from math import *
 from tabulate import tabulate
 import sympy as sp
 x = sp.Symbol('x')
@@ -46,13 +46,13 @@ class Lagrange:
 
 def kpointsToArray(kpointsStr):
     kpointSplited = kpointsStr.split(",")
-    kpoints = list(map(lambda x : float(x), kpointSplited ))
+    kpoints = list(map(lambda x : float(eval(x)), kpointSplited ))
     return kpoints
 
 while True:        
     option = input("elija una opcion: \n 1) Calcular el polinomio interpolante de Lagrange con puntos \n 2) Calcular el polinomio interpolante de Lagrange con la funcion \n 3) Salir  \n :   ")
     if option == "1":
-        p0 = float(eval(input("ingrese el valor a evaluar en el polinomio, si requiere, usar la libreria math: ")))
+        p0 = float(eval(input("ingrese el valor a evaluar en el polinomio: ")))
         xpointStr = input("ingrese los puntos de x separados por , : ")
         ypointStr = input("ingrese los puntos y separados por , : ")
         lagr = Lagrange(kpointsToArray(xpointStr), kpointsToArray(ypointStr), p0, None)

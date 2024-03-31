@@ -1,4 +1,4 @@
-import math
+from math import *
 import sympy as sp
 from tabulate import tabulate
 
@@ -55,13 +55,13 @@ class Hermite:
                 
 def kpointsToArray(kpointsStr):
     kpointSplited = kpointsStr.split(",")
-    kpoints = list(map(lambda x : float(x), kpointSplited ))
+    kpoints = list(map(lambda x : float(eval(x)), kpointSplited ))
     return kpoints
 
 while True:
     option = input("elija una opcion: \n 1) Calcular el polinomio interpolante de Hermite con puntos \n 2) Calcular el polinomio interpolante de Hermite con la funcion \n 3) Salir  \n :   ")
     if option == "1":
-        p0 = float(eval(input("ingrese el valor a evaluar en el polinomio, si requiere, usar la libreria math: ")))
+        p0 = float(eval(input("ingrese el valor a evaluar en el polinomio: ")))
         xpointStr = input("ingrese los puntos de x separados por , : ")
         ypointStr = input("ingrese los puntos y separados por , : ")
         ypPointStr = input("ingrese los puntos y' separados por , :")
@@ -69,7 +69,7 @@ while True:
         her.getHermiteByPoints()
 
     if option == "2":
-        p0 = float(eval(input("ingrese el valor a evaluar en el polinomio, si requiere, usar la libreria math: ")))
+        p0 = float(eval(input("ingrese el valor a evaluar en el polinomio: ")))
         xpointStr = input("ingrese los puntos de x separados por , : ")
         f = eval(input("Ingrese la funcion  usando sympy, ejemplo: ' sp.cos(x) + 1/x': "))
         her = Hermite(kpointsToArray(xpointStr), [], [], p0, f)

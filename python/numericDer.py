@@ -1,6 +1,7 @@
-import math
+from math import *
 import sympy as sp
 from tabulate import tabulate
+
 
 class NumericDerivation:
     def __init__(self, h, x, y):
@@ -89,5 +90,28 @@ class NumericDerivation:
             print(tabulate(tableData, headers=heads, tablefmt="grid"))               
         except:
             print("ha ocurrido un error")
+
+def kpointsToArray(kpointsStr):
+    kpointSplited = kpointsStr.split(",")
+    kpoints = list(map(lambda x : float(eval(x)), kpointSplited ))
+    return kpoints
+
+while True:
+    option = input("elija una opcion: \n 1) Aproximar derivada por tres puntos \n 2) Aproximar derivada con cinco puntos \n 3) Salir  \n :   ")
+    if option == "1":
+        h = float(input("ingrese el paso: "))
+        x = input("ingrese los puntos x separados por , : ")
+        y = input("ingrese los puntos y separados por , : ")
+        NumericDerivation(h, kpointsToArray(x), kpointsToArray(y)).getThreePoints()
+    if option == "2":
+        h = float(input("ingrese el paso: "))
+        x = input("ingrese los puntos x separados por , : ")
+        y = input("ingrese los puntos y separados por , : ")
+        NumericDerivation(h, kpointsToArray(x), kpointsToArray(y)).getFivePoints()
+    if option == "3":
+        print("gracias por usar el programa :)")
+        break
+
+        
 
         
