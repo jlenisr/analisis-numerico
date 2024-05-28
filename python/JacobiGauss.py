@@ -1,73 +1,106 @@
-import numpy as np
+import sympy as sp
+sp.init_printing(use_unicode = True)
 
-def resolver_sistema_ecuaciones():
-    # Solicitar los datos del sistema
-    A = np.array(eval(input('Ingrese la matriz de coeficientes A: ')))
-    b = np.array(eval(input('Ingrese el vector de términos independientes b: ')))
-    x0 = np.array(eval(input('Ingrese el vector inicial de aproximación x0: ')))
-    tol = float(input('Ingrese la tolerancia para el criterio de convergencia: '))
-    max_iter = int(input('Ingrese el número máximo de iteraciones: '))
+class GaussJacobi():
+    def __init__(self, A, b, x_0, iter, tol):
+        self.A = A
+        self.b = b
+        self.x_0 = x_0
+        self.iter = iter
+        self.tol = tol
 
-    # Mostrar el menú de métodos
-    metodo = int(input('Seleccione el método iterativo:\n1. Gauss-Seidel\n2. Jacobi\n'))
 
-    # Resolver el sistema según el método seleccionado
-    if metodo == 1:
-        solucion = gauss_seidel(A, b, x0, tol, max_iter)
-    elif metodo == 2:
-        solucion = jacobi(A, b, x0, tol, max_iter)
-    else:
-        print('Opción inválida')
-        return None
+    def __infinityNorm(self, A):
+        B = list()
+        for i in range(0, len(A.col(0))):
+            B.append(sum(abs(A.row(i))))
+        return max(B)
 
-    return solucion
+    def __spectralRatio(self, A):
+        eigA = map(lambda x: float(abs(x)), list(A.eigenvals().keys()))
+        return max(eigA)
 
-def gauss_seidel(A, b, x0, tol, max_iter):
-    n = len(b)
-    x = x0.copy()
-    iter = 0
-    error = float('inf')
+    def __defineMatrix(self, A, b, x_0):
+        Asp = sp.Matrix(A)
+        bsp = sp.Matrix(b)
+        x_i = sp.Matrix(x_0)
+        D = sp.diag(*Asp.diagonal())
+        print("D = ")
+        sp.pprint(D)
+        print("\n")
+        U = D - Asp.upper_triangular()
+        print("U = ")
+        sp.pprint(U)
+        print("\n")
+        L = D - Asp.lower_triangular()
+        print("L = ")
+        sp.pprint(L)
+        print("\n")
+        return (D, L, U, Asp, bsp, x_i)
 
-    while error > tol and iter < max_iter:
-        x_old = x.copy()
-        for i in range(n):
-            sum = 0
-            for j in range(i):
-                sum += A[i, j] * x[j]
-            for j in range(i + 1, n):
-                sum += A[i, j] * x_old[j]
-            x[i] = (b[i] - sum) / A[i, i]
-        error = np.max(np.abs(x - x_old))
-        iter += 1
+    def jacobi(self):
+        D, L, U, Asp, bsp, x_i = self.__defineMatrix(self.A, self.b, self.x_0)
+        Tj = D**-1*(L+U)
+        print("Tj = ")
+        sp.pprint(Tj)
+        print("\n")
+        cj = (D**-1)*bsp
+        print("C = ")
+        print(list(cj))
+        print("\n")
+        l = self.__spectralRatio(Tj)
+        print("Spectral ratio: ", l)
+        for i in range(0, self.iter):
+            x = Tj * x_i + cj
+            if Asp*x.evalf(6) == bsp or self.__infinityNorm(x-x_i)/self.__infinityNorm(x) < self.tol:
+                print("X = ")
+                sp.pprint(x.evalf(6))
+                break
+            x_i = x
+            print(f"x_{i+1} = ", list(x.evalf(6)))
 
-    if iter == max_iter:
-        print(f"Advertencia: No se alcanzó la convergencia después de {max_iter} iteraciones.")
+    def gauss(self):
+        D, L, U, Asp, bsp, x_i = self.__defineMatrix(self.A, self.b, self.x_0)
+        Tg = (D-L)**-1*U
+        print("Tg = ")
+        sp.pprint(Tg)
+        print("\n")
+        cg = (D-L)**-1*bsp
+        print("C = ")
+        print(list(cg))
+        print("\n")
+        l = self.__spectralRatio(Tg)
+        print("Spectral ratio: ", l)
+        for i in range(0, self.iter):
+            x = Tg * x_i + cg
+            if Asp*x.evalf(6) == bsp or self.__infinityNorm(x-x_i)/self.__infinityNorm(x) < self.tol:
+                print("X = ")
+                sp.pprint(x.evalf(6))
+                break
+            x_i = x
+            print(f"x_{i+1} = ", list(x.evalf(6)))
 
-    return x
+def basicFilling():
+    A = eval(input("Ingrese la matriz: "))
+    b = eval(input("introduzca el vector b: "))
+    x_0 = eval(input("ingrese el vector inicial: "))
+    iter = int(input("ingrese el nùmero de iteraciones: "))
+    tol = float(input("Ingrese la tolerancia: "))
+    return (A, b, x_0, iter, tol)
 
-def jacobi(A, b, x0, tol, max_iter):
-    n = len(b)
-    x = x0.copy()
-    iter = 0
-    error = float('inf')
+while True:
+    print("Metodo: \n")
+    print("1. Jacobi \n")
+    print("2. Gauss \n")
+    print("3. Salir \n")
+    option = int(input("Numero de metodo: "))
+    if option == 1:
+        A, b, x_0, iter, tol = basicFilling()
+        GaussJacobi(A, b, x_0, iter, tol).jacobi()
+    if option == 2:
+        A, b, x_0, iter, tol = basicFilling()
+        GaussJacobi(A, b, x_0, iter, tol).gauss()
+    if option == 3:
+        print("gracias por ejecutar ;)")
+        break
 
-    while error > tol and iter < max_iter:
-        x_old = x.copy()
-        for i in range(n):
-            sum = 0
-            for j in range(n):
-                if j != i:
-                    sum += A[i, j] * x_old[j]
-            x[i] = (b[i] - sum) / A[i, i]
-        error = np.max(np.abs(x - x_old))
-        iter += 1
-
-    if iter == max_iter:
-        print(f"Advertencia: No se alcanzó la convergencia después de {max_iter} iteraciones.")
-
-    return x
-
-# Ejemplo de uso
-solucion = resolver_sistema_ecuaciones()
-if solucion is not None:
-    print('Solución:', solucion)

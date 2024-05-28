@@ -2,8 +2,8 @@ import sympy as sp
 sp.init_printing(use_unicode = True)
 def optimizeW(L, U, D):
     Tj = (D**-1)*(L+U) 
-    EigTj = list(Tj.eigenvals().keys())
-    TjRatio = max(EigTj)
+    EigTj = map(lambda x: float(abs(x)), list(Tj.eigenvals().keys()))
+    TjRatio = max(list(EigTj))
     w = 2/(1 + sp.sqrt(1 - TjRatio**2))
     return w
 
@@ -32,13 +32,27 @@ def sor(A, b, x_0, iter, tol):
     print("\n")
     wCut = '{:.4f}'.format(optimizeW(L, U , D))
     w = float(wCut)
+    Tw = ((D-w*L)**-1)*((1-w)*D + w*U)
+    print("Tw = ")
+    sp.pprint(Tw)
+    print("\n")
+    Cw = w*((D-w*L)**-1)*bnp
+    print("Cw = ")
+    sp.pprint(Cw)
+    print("\n")
+    print("spectral ratio:", w - 1)
     print("w = ", w)
     for i in range(0, iter):
-        x = ((D-w*L)**-1)*((1-w)*D + w*U)*x_i + w*((D-w*L)**-1)*bnp
+        x = Tw*x_i + Cw
         if Anp*x.evalf(6) == bnp or infinityNorm(x-x_i)/infinityNorm(x) < tol:
             print(" X = ")
             sp.pprint(x.evalf(6))
-            break; 
+            break 
         x_i = x
         print(f"x_{i+1} = ", list(x.evalf(6)))
-sor([[4,3,0], [3,4,-1], [0,-1,4]], [24,30,-24], [1,1,1], 15, 1e-10)    
+A = eval(input("Ingrese la matriz: "))
+b = eval(input("introduzca el vector b: "))
+x_0 = eval(input("ingrese el vector inicial: "))
+iter = int(input("ingrese el nùmero de iteraciones: "))
+tol = float(input("Ingrese la tolerancia: "))
+sor(A, b, x_0, iter, tol)

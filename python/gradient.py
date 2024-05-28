@@ -26,4 +26,11 @@ def gradient(A, b, x_i, v_i, iter, tol ):
             break
         x_0 = x.evalf(6)
         v_1 = bsp - Asp*x.evalf(6)
-gradient([[4,3,0], [3,4,-1], [0,-1,4]], [24,30,-24], [0,0,0], [1,0,0], 100, 1e-10)
+        
+A = eval(input("Ingrese la matriz: "))
+b = eval(input("introduzca el vector b: "))
+x_0 = eval(input("ingrese el vector inicial: "))
+v_1 = eval(input("ingrese el primer vector del descenso: "))
+iter = int(input("ingrese el nùmero de iteraciones: "))
+tol = float(input("Ingrese la tolerancia: "))
+gradient(A, b, x_0, v_1, iter, tol)
