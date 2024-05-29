@@ -17,7 +17,7 @@ class GaussJacobi():
         return max(B)
 
     def __spectralRatio(self, A):
-        eigA = map(lambda x: float(abs(x)), list(A.eigenvals().keys()))
+        eigA = map(lambda x: float(abs(x).expand(complex = True)), list(A.eigenvals().keys()))
         return max(eigA)
 
     def __defineMatrix(self, A, b, x_0):

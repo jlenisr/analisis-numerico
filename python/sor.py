@@ -2,8 +2,8 @@ import sympy as sp
 sp.init_printing(use_unicode = True)
 def optimizeW(L, U, D):
     Tj = (D**-1)*(L+U) 
-    EigTj = map(lambda x: float(abs(x)), list(Tj.eigenvals().keys()))
-    TjRatio = max(list(EigTj))
+    EigTj = map(lambda x: float(abs(x).expand(complex = True)), list(Tj.eigenvals().keys()))
+    TjRatio = max(EigTj)
     w = 2/(1 + sp.sqrt(1 - TjRatio**2))
     return w
 
